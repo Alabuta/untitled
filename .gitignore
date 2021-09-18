@@ -15,7 +15,9 @@
 *.pyc
 
 .vs/
+.idea/
 build/
+cmake-build-debug/
 [Bb]in/
 [Bb]in_d/
 x64/
