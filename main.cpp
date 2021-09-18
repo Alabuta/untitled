@@ -14,7 +14,7 @@ using namespace std::string_view_literals;
 int main()
 {
     if (auto result = glfwInit(); result != GLFW_TRUE)
-        throw std::runtime_error(fmt::format("failed to init GLFW: {0:#x}"s, result));
+        throw std::runtime_error(fmt::format("failed to init GLFW: {0:#x}", result));
 
     glm::vec2 vec{4, 8};
     nlohmann::json json;
