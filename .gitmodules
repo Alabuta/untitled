@@ -2,3 +2,7 @@
 	path = external/glm
 	url = git@github.com:g-truc/glm.git
 	branch = master
+[submodule "external/fmt"]
+	path = external/fmt
+	url = git@github.com:fmtlib/fmt.git
+	branch = master
