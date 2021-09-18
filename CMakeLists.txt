@@ -9,10 +9,12 @@ configure_file(
 
 add_subdirectory(external/glm EXCLUDE_FROM_ALL)
 add_subdirectory(external/fmt EXCLUDE_FROM_ALL)
+add_subdirectory(external/nlohmann_json EXCLUDE_FROM_ALL)
 
 include_directories(external)
 include_directories(external/glm)
 include_directories(external/fmt)
+include_directories(external/nlohmann_json)
 
 #set(glm_DIR "${PROJECT_SOURCE_DIR}/cmake")
 
@@ -61,7 +63,7 @@ target_link_libraries(${EXECUTABLE_TARGET_NAME}
 #        #glfw ${GLFW_LIBRARY}
 #        glfw
         glm#::glm
-#        nlohmann_json::nlohmann_json
+        nlohmann_json::nlohmann_json
 
 #        range-v3 range-v3-meta range-v3::meta range-v3-concepts
 )
