@@ -8,9 +8,9 @@ configure_file(
 )
 
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/external/glm EXCLUDE_FROM_ALL)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/external/fmt EXCLUDE_FROM_ALL)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/external/glfw EXCLUDE_FROM_ALL)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/external/volk EXCLUDE_FROM_ALL)
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/external/fmt EXCLUDE_FROM_ALL)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/external/range-v3 EXCLUDE_FROM_ALL)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/external/nlohmann_json EXCLUDE_FROM_ALL)
 
@@ -32,6 +32,12 @@ include_directories(${EXECUTABLE_TARGET_NAME}
 
     SYSTEM INTERFACE
         ${CMAKE_CURRENT_LIST_DIR}/external
+        ${CMAKE_CURRENT_LIST_DIR}/external/glm
+        ${CMAKE_CURRENT_LIST_DIR}/external/fmt
+        ${CMAKE_CURRENT_LIST_DIR}/external/glfw
+        ${CMAKE_CURRENT_LIST_DIR}/external/volk
+        ${CMAKE_CURRENT_LIST_DIR}/external/range-v3
+        ${CMAKE_CURRENT_LIST_DIR}/external/nlohmann_json
         include
 )
 
