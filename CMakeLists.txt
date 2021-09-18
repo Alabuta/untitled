@@ -10,6 +10,7 @@ configure_file(
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/external/glm EXCLUDE_FROM_ALL)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/external/glfw EXCLUDE_FROM_ALL)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/external/fmt EXCLUDE_FROM_ALL)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/external/range-v3 EXCLUDE_FROM_ALL)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/external/nlohmann_json EXCLUDE_FROM_ALL)
 
 set(EXECUTABLE_TARGET_NAME executable)
@@ -32,6 +33,7 @@ include_directories(${EXECUTABLE_TARGET_NAME}
         ${CMAKE_CURRENT_LIST_DIR}/external/glm
         ${CMAKE_CURRENT_LIST_DIR}/external/glfw
         ${CMAKE_CURRENT_LIST_DIR}/external/fmt
+        ${CMAKE_CURRENT_LIST_DIR}/external/range-v3
         ${CMAKE_CURRENT_LIST_DIR}/external/nlohmann_json
         include
 )
@@ -57,11 +59,9 @@ target_link_libraries(${EXECUTABLE_TARGET_NAME}
     PRIVATE
         Vulkan::Vulkan
 
-#        fmt::fmt-header-only
-        fmt::fmt
-        glfw
         glm#::glm
+        glfw
+        fmt::fmt
+        range-v3 range-v3-meta range-v3::meta range-v3-concepts
         nlohmann_json::nlohmann_json
-
-#        range-v3 range-v3-meta range-v3::meta range-v3-concepts
 )
