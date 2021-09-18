@@ -7,12 +7,19 @@ configure_file(
     "${PROJECT_SOURCE_DIR}/include/config.hxx"
 )
 
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/external/glm EXCLUDE_FROM_ALL)
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/external/fmt EXCLUDE_FROM_ALL)
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/external/glfw EXCLUDE_FROM_ALL)
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/external/volk EXCLUDE_FROM_ALL)
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/external/range-v3 EXCLUDE_FROM_ALL)
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/external/nlohmann_json EXCLUDE_FROM_ALL)
+set(SUBMODULES
+    glm
+    fmt
+    glfw
+    volk
+    range-v3
+    nlohmann_json
+)
+
+foreach(SUBMODULE ${SUBMODULES})
+    message(STATUS "Including submodule ${SUBMODULE}")
+    add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/external/${SUBMODULE} EXCLUDE_FROM_ALL)
+endforeach()
 
 set(EXECUTABLE_TARGET_NAME executable)
 add_executable(${EXECUTABLE_TARGET_NAME})
@@ -22,11 +29,9 @@ target_sources(${EXECUTABLE_TARGET_NAME}
         main.cpp
 )
 
-message("${CMAKE_PREFIX_PATH}")
-
 find_package(Vulkan REQUIRED)
 
-include_directories(${EXECUTABLE_TARGET_NAME}
+include_directories(#${EXECUTABLE_TARGET_NAME}
     PRIVATE
         src
 
