@@ -9,11 +9,13 @@ configure_file(
 
 add_subdirectory(external/glm EXCLUDE_FROM_ALL)
 add_subdirectory(external/fmt EXCLUDE_FROM_ALL)
+add_subdirectory(external/glfw EXCLUDE_FROM_ALL)
 add_subdirectory(external/nlohmann_json EXCLUDE_FROM_ALL)
 
 include_directories(external)
 include_directories(external/glm)
 include_directories(external/fmt)
+include_directories(external/glfw)
 include_directories(external/nlohmann_json)
 
 #set(glm_DIR "${PROJECT_SOURCE_DIR}/cmake")
@@ -33,9 +35,8 @@ message("${CMAKE_PREFIX_PATH}")
 
 find_package(Vulkan REQUIRED)
 
-# :TODO: replace by target_include_directories
-include_directories(SYSTEM include)
-include_directories(src)
+target_include_directories(${EXECUTABLE_TARGET_NAME} SYSTEM PRIVATE include)
+target_include_directories(${EXECUTABLE_TARGET_NAME} PRIVATE src)
 
 target_compile_features(${EXECUTABLE_TARGET_NAME}
     PUBLIC
@@ -60,8 +61,7 @@ target_link_libraries(${EXECUTABLE_TARGET_NAME}
 
 #        fmt::fmt-header-only
         fmt::fmt
-#        #glfw ${GLFW_LIBRARY}
-#        glfw
+        glfw
         glm#::glm
         nlohmann_json::nlohmann_json
 

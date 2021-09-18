@@ -10,3 +10,7 @@
 	path = external/nlohmann_json
 	url = git@github.com:nlohmann/json.git
 	branch = master
+[submodule "external/glfw"]
+	path = external/glfw
+	url = git@github.com:glfw/glfw.git
+	branch = master
