@@ -12,6 +12,8 @@ using namespace std::string_view_literals;
 #include <volk/volk.h>
 #include <nlohmann/json.hpp>
 
+//#include <boost/cstdfloat.hpp>
+
 int main()
 {
     if (auto result = glfwInit(); result != GLFW_TRUE)
@@ -20,10 +22,11 @@ int main()
     if (auto result = volkInitialize(); result != VK_SUCCESS)
         throw std::runtime_error("failed to initialize 'volk' meta-loader"s);
 
+//    boost::float32_t f = 2;
     glm::vec2 vec{4, 8};
     nlohmann::json json;
     json["pi"s] = 3.141;
-    fmt::print("Hello, World! {}:{}\nPI is {}", vec.x, vec.y, json.dump());
+    fmt::print("Hello, World! {}:{}\nPI is {}\nf{}", vec.x, vec.y, json.dump(), 1.f);
 
     return 0;
 }
