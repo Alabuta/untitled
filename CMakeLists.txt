@@ -49,6 +49,13 @@ include_directories(${EXECUTABLE_TARGET_NAME}
         include
 )
 
+if (CMAKE_CXX_COMPILER_ID MATCHES GNU)
+    target_compile_definitions(${EXECUTABLE_TARGET_NAME}
+        PRIVATE
+            _GLIBCXX_USE_CXX11_ABI=1
+    )
+endif ()
+
 target_compile_features(${EXECUTABLE_TARGET_NAME}
     PUBLIC
         cxx_std_20
