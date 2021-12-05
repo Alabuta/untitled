@@ -32,11 +32,6 @@ target_sources(${EXECUTABLE_TARGET_NAME}
         main.cxx
 )
 
-#target_include_directories(${EXECUTABLE_TARGET_NAME}
-#    PUBLIC
-#        ${Boost_INCLUDE_DIR}
-#)
-
 include_directories(${EXECUTABLE_TARGET_NAME}
     PRIVATE
         src
@@ -77,7 +72,7 @@ target_link_libraries(${EXECUTABLE_TARGET_NAME}
 
         ${Boost_LIBRARIES}
 
-        glm#::glm
+        glm::glm
         glfw
         volk
         fmt::fmt
