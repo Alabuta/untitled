@@ -32,11 +32,6 @@ target_sources(${EXECUTABLE_TARGET_NAME}
         main.cxx
 )
 
-#target_include_directories(${EXECUTABLE_TARGET_NAME}
-#    PUBLIC
-#        ${Boost_INCLUDE_DIR}
-#)
-
 include_directories(${EXECUTABLE_TARGET_NAME}
     PRIVATE
         src
