@@ -88,6 +88,11 @@ target_compile_options(${EXECUTABLE_TARGET_NAME}
             -Wlogical-op
             -Wuseless-cast
             -Wmisleading-indentation
+
+            -Wno-c++98-compat
+            -Wno-c++98-compat-pedantic
+
+            -Wno-pre-c++17-compat
         ">"
 
         "$<$<BOOL:${CXX_FLAGS_STYLE_GNU}>:"
@@ -105,14 +110,10 @@ target_compile_options(${EXECUTABLE_TARGET_NAME}
             /EHa
             # -fcxx-exceptions
 
-            -Wno-c++98-compat
-            -Wno-c++98-compat-pedantic
-
             -Wno-unknown-pragmas
             -Wno-unknown-warning-option
 
             -Wno-shadow-field-in-constructor
-            -Wno-nonportable-system-include-path
         ">"
 
         "$<$<BOOL:${CXX_FLAGS_STYLE_MSVC}>:"
