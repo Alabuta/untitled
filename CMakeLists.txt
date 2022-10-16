@@ -7,6 +7,13 @@ configure_file(
     "${PROJECT_SOURCE_DIR}/include/config.hxx"
 )
 
+set(EXECUTABLE_TARGET_NAME executable)
+add_executable(${EXECUTABLE_TARGET_NAME})
+
+set(CMAKE_LINK_LIBRARY_USING_load_archive TRUE)
+set(CMAKE_C_LINK_LIBRARY_USING_load_archive_SUPPORTED TRUE)
+set(CMAKE_CXX_LINK_LIBRARY_USING_load_archive_SUPPORTED TRUE)
+
 # Get compiler info
 set(CXX_FLAGS_STYLE_GNU OFF)
 set(CXX_FLAGS_STYLE_MSVC OFF)
@@ -28,6 +35,29 @@ endif()
 
 set(GLFW_LIBRARY_TYPE "SHARED" CACHE STRING "" FORCE)
 
+#[[set(USE_ASAN OFF)
+if(${USE_ASAN})
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -g3")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=address -g3")
+
+    set(EXTRA_COMPILER_OPTIONS ${EXTRA_COMPILER_OPTIONS}
+        -fsanitize=address -g3
+    )
+
+    set(EXTRA_LIBS ${EXTRA_LIBS}
+        clang_rt.asan_dynamic-x86_64
+        clang_rt.asan_dynamic_runtime_thunk-x86_64
+    )
+
+    set(EXTRA_LINK_OPTIONS ${EXTRA_LINK_OPTIONS}
+        /wholearchive:clang_rt.asan_dynamic_runtime_thunk-x86_64.lib
+    )
+
+    set(EXTRA_LINK_DIRS ${EXTRA_LINK_DIRS}
+        "C:/Program Files/LLVM/lib/clang/15.0.2/lib/windows"
+    )
+endif()]]
+
 set(SUBMODULES
     glm
     volk
@@ -44,9 +74,6 @@ endforeach()
 
 find_package(Vulkan REQUIRED)
 find_package(Boost 1.68 REQUIRED)
-
-set(EXECUTABLE_TARGET_NAME executable)
-add_executable(${EXECUTABLE_TARGET_NAME})
 
 target_sources(${EXECUTABLE_TARGET_NAME}
     PRIVATE
@@ -108,7 +135,8 @@ target_compile_options(${EXECUTABLE_TARGET_NAME}
 
         "$<$<BOOL:${CXX_FLAGS_STYLE_CLANGCL}>:"
             /EHa
-            # -fcxx-exceptions
+            # -Xclang -fexceptions -Xclang -fcxx-exceptions
+            SHELL:-Xclang -fexceptions
 
             -Wno-unknown-pragmas
             -Wno-unknown-warning-option
@@ -158,16 +186,40 @@ set_target_properties(${EXECUTABLE_TARGET_NAME} PROPERTIES
 target_link_directories(${EXECUTABLE_TARGET_NAME}
     PRIVATE
         ${EXTRA_LINK_DIRS}
+        # "C:/Program Files/LLVM/lib/clang/15.0.2/lib/windows"
 )
+
+if(${USE_ASAN})
+    if(CMAKE_C_COMPILER_ID STREQUAL "AppleClang")
+        set(CMAKE_C_LINK_LIBRARY_USING_load_archive "-force_load clang_rt.asan_dynamic_runtime_thunk-x86_64.lib")
+    elseif(CMAKE_C_COMPILER_ID STREQUAL "GNU" AND CMAKE_SYSTEM_NAME STREQUAL "Linux")
+        set(CMAKE_C_LINK_LIBRARY_USING_load_archive
+            "LINKER:--push-state,--whole-archive"
+            "clang_rt.asan_dynamic_runtime_thunk-x86_64.lib"
+            "LINKER:--pop-state"
+        )
+    elseif(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
+        set(CMAKE_C_LINK_LIBRARY_USING_load_archive "/WHOLEARCHIVE:clang_rt.asan_dynamic_runtime_thunk-x86_64.lib")
+    else()
+        # feature not yet supported for the other environments
+        set(CMAKE_C_LINK_LIBRARY_USING_load_archive_SUPPORTED FALSE)
+    endif()
+
+    # The -force_load Apple linker option requires a file name
+    set(asan_dynamic_runtime_thunk_lib
+        "$<IF:$<LINK_LANG_AND_ID:C,AppleClang>,clang_rt.asan_dynamic_runtime_thunk-x86_64.a,clang_rt.asan_dynamic_runtime_thunk-x86_64>"
+    )
+endif()
 
 target_link_libraries(${EXECUTABLE_TARGET_NAME}
     PRIVATE
         ${EXTRA_LIBS}
+        #[[clang_rt.asan_dynamic-x86_64
+        clang_rt.asan_dynamic_runtime_thunk-x86_64.lib]]
+        # "$<LINK_LIBRARY:load_archive,${asan_dynamic_runtime_thunk_lib}>"
 
         Vulkan::Vulkan
-
         ${Boost_LIBRARIES}
-
         glm::glm
         volk_headers
         glfw
@@ -180,7 +232,8 @@ target_link_options(${EXECUTABLE_TARGET_NAME}
     PRIVATE
         ${EXTRA_LINK_OPTIONS}
 
-        "$<$<BOOL:${CXX_FLAGS_STYLE_GNU}>:"
+        "$<$<IN_LIST:${CMAKE_SYSTEM_NAME}," Linux";"Darwin">:"
+            # LINKER:SHELL:-z defs
             LINKER:-z,defs;                         # Detect and reject underlinking
             LINKER:-z,now;                          # Disable lazy binding
             LINKER:-z,relro                         # Read-only segments after relocation

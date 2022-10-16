@@ -17,6 +17,15 @@ using namespace std::string_literals;
 
 int main()
 {
+    if constexpr (/* DISABLES CODE */(false)) {
+        char sentence[] = "This is a sentence.";
+        char mem[16];
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+        strcpy(mem, sentence);
+#pragma GCC diagnostic pop
+    }
+
     if (auto result = glfwInit(); result != GLFW_TRUE)
         throw std::runtime_error(fmt::format("failed to init GLFW: {0:#x}", result));
 
