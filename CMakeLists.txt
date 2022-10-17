@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.25)
 project(untitled VERSION 1.0.0 LANGUAGES CXX)
 
 configure_file(
-    "${PROJECT_SOURCE_DIR}/config.hxx.in"
+    "${PROJECT_SOURCE_DIR}/include/config.hxx.in"
     "${PROJECT_SOURCE_DIR}/include/config.hxx"
 )
 
@@ -46,10 +46,10 @@ target_sources(${EXECUTABLE_TARGET_NAME}
 target_include_directories(${EXECUTABLE_TARGET_NAME}
     SYSTEM PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/external
+        ${Boost_INCLUDE_DIR}
         include
 
     PRIVATE
-        ${Boost_INCLUDE_DIR}
         src
 )
 
@@ -134,16 +134,17 @@ target_compile_options(${EXECUTABLE_TARGET_NAME}
         ">"
 )
 
-set_target_properties(${EXECUTABLE_TARGET_NAME} PROPERTIES
-    VERSION ${PROJECT_VERSION}
+set_target_properties(${EXECUTABLE_TARGET_NAME}
+    PROPERTIES
+        VERSION ${PROJECT_VERSION}
 
-    CXX_STANDARD 23
-    CXX_STANDARD_REQUIRED ON
-    CXX_EXTENSIONS OFF
+        CXX_STANDARD 23
+        CXX_STANDARD_REQUIRED ON
+        CXX_EXTENSIONS OFF
 
-    POSITION_INDEPENDENT_CODE ON
+        POSITION_INDEPENDENT_CODE ON
 
-    DEBUG_POSTFIX .d
+        DEBUG_POSTFIX .d
 )
 
 target_link_directories(${EXECUTABLE_TARGET_NAME}
