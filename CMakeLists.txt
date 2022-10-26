@@ -21,6 +21,9 @@ set(GLFW_LIBRARY_TYPE "SHARED" CACHE STRING "" FORCE)
 include("cmake/InitSanitizers.cmake")
 include("cmake/SetCompilerFlagsStyle.cmake")
 
+find_package(Vulkan REQUIRED)
+find_package(Boost 1.68 REQUIRED)
+
 set(SUBMODULES
     glm
     volk
@@ -34,9 +37,6 @@ foreach(SUBMODULE ${SUBMODULES})
     message(STATUS "Including submodule ${SUBMODULE}")
     add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/external/${SUBMODULE} EXCLUDE_FROM_ALL SYSTEM)
 endforeach()
-
-find_package(Vulkan REQUIRED)
-find_package(Boost 1.68 REQUIRED)
 
 target_sources(${EXECUTABLE_TARGET_NAME}
     PRIVATE
@@ -53,6 +53,19 @@ target_include_directories(${EXECUTABLE_TARGET_NAME}
         src
 )
 
+set_target_properties(${EXECUTABLE_TARGET_NAME}
+    PROPERTIES
+        VERSION ${PROJECT_VERSION}
+
+        CXX_STANDARD 23
+        CXX_STANDARD_REQUIRED ON
+        CXX_EXTENSIONS OFF
+
+        POSITION_INDEPENDENT_CODE ON
+
+        DEBUG_POSTFIX .d
+)
+
 target_compile_options(${EXECUTABLE_TARGET_NAME}
     PRIVATE
         ${EXTRA_COMPILER_OPTIONS}
@@ -62,6 +75,7 @@ target_compile_options(${EXECUTABLE_TARGET_NAME}
             -Wall
             -Wextra
             -Werror
+            -Wconversion
 
             -Wold-style-cast
             -Wnon-virtual-dtor
@@ -134,19 +148,6 @@ target_compile_options(${EXECUTABLE_TARGET_NAME}
         ">"
 )
 
-set_target_properties(${EXECUTABLE_TARGET_NAME}
-    PROPERTIES
-        VERSION ${PROJECT_VERSION}
-
-        CXX_STANDARD 23
-        CXX_STANDARD_REQUIRED ON
-        CXX_EXTENSIONS OFF
-
-        POSITION_INDEPENDENT_CODE ON
-
-        DEBUG_POSTFIX .d
-)
-
 target_link_directories(${EXECUTABLE_TARGET_NAME}
     PRIVATE
         ${EXTRA_LINK_DIRS}
@@ -154,7 +155,10 @@ target_link_directories(${EXECUTABLE_TARGET_NAME}
 
 target_link_libraries(${EXECUTABLE_TARGET_NAME}
     PRIVATE
-        ${EXTRA_LIBS}
+        "$<$<IN_LIST:${CMAKE_SYSTEM_NAME}," Linux";"Darwin">:"
+            stdc++fs
+            # pthread
+        ">"
 
         Vulkan::Vulkan
         ${Boost_LIBRARIES}
